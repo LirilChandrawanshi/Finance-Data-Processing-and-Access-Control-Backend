@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: finance-backend
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:finance_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: update        # Use 'validate' or 'none' in production; use Flyway/Liquibase instead
+    show-sql: false
+    open-in-view: false        # Prevent LazyInitializationException silently masking N+1 issues
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 25
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never     # Never expose internal error messages in production
+
+# ── JWT Configuration ──────────────────────────────────────────────────────────
+# Secret MUST be a Base64-encoded string of ≥ 32 bytes.
+# Override via environment variable JWT_SECRET in production.
+jwt:
+  secret: ${JWT_SECRET:Wm9ydnluRmluYW5jZUJhY2tlbmRTZWNyZXRLZXkyMDI0Rg==}
+  expiration: ${JWT_EXPIRATION_MS:86400000}   # 24 hours in milliseconds
+
+# ── Logging ────────────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.zorvyn.finance: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
